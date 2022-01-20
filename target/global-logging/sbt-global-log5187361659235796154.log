@@ -1,0 +1,14 @@
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(build, None, None)[0m
+[0m[[0m[33mwarn[0m] [0m[0mbuild source files have changed[0m
+[0m[[0m[33mwarn[0m] [0m[0mmodified files: [0m
+[0m[[0m[33mwarn[0m] [0m[0m  /mnt/a/Projects/scala/scala-collection-benchmark/build.sbt[0m
+[0m[[0m[33mwarn[0m] [0m[0mApply these changes by running `reload`.[0m
+[0m[[0m[33mwarn[0m] [0m[0mAutomatically reload the build when source changes are detected by setting `Global / onChangedBuildSource := ReloadOnSourceChanges`.[0m
+[0m[[0m[33mwarn[0m] [0m[0mDisable this warning by setting `Global / onChangedBuildSource := IgnoreSourceChanges`.[0m
+[0m[[0m[31merror[0m] [0m[0mNot a valid command: build[0m
+[0m[[0m[31merror[0m] [0m[0mNot a valid project ID: build[0m
+[0m[[0m[31merror[0m] [0m[0mExpected ':'[0m
+[0m[[0m[31merror[0m] [0m[0mNot a valid key: build (similar: loadedBuild, isMetaBuild)[0m
+[0m[[0m[31merror[0m] [0m[0mbuild[0m
+[0m[[0m[31merror[0m] [0m[0m     ^[0m
+[0m[[0m[0mdebug[0m] [0m[0m> Exec(idea-shell, None, None)[0m
