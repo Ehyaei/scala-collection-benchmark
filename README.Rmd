@@ -1,0 +1,855 @@
+---
+title: "Scala Data Collections Performance"
+output: 
+  html_document:
+    keep_md: true
+---
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(flextable)
+library(zstatUtils)
+library(DiagrammeR)
+library(DiagrammeRsvg)
+library(rsvg)
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE, comment = " ",
+                      message = FALSE, warning = FALSE, error = FALSE)
+load_image <- function(path){
+graph %>%
+    export_svg() %>% charToRaw() %>% rsvg_svg(path)
+knitr::include_graphics(path)
+} 
+```
+
+
+Scala has different data collections and using the proper objects is important in optimizing the big data pipelines. 
+
+This post tries to study the characteristics of the Scala collection, such as:
+
+- Memory Usage,
+
+- Operations Time.
+
+from the point of view of practical benchmarks. 
+We will try to study the performance of data collection in two posts; part one related to `Sequence` collection, the second contains `Maps` and `Sets`.
+The diagram below demonstrates all of the collections in the package `scala.collection`. These are all high-level abstract classes or traits with both mutable and immutable implementations.
+
+```{r,fig.align='center',fig.cap="Mutable and Immutable Data Collection High-level Abstract Classes or Traits"}
+graph <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]  
+  node [shape = oval, style = filled, color = DeepSkyBlue, fillcolor = AliceBlue]
+  edge[ color = DeepSkyBlue]
+  A [label = 'Traversable']
+  B [label = 'Iterable']
+  C [label =  'Seq']
+  D [label = 'Set']
+  E [label = 'Map']
+  F1 [label = 'IndexedSeq']
+  F2 [label = 'LinearSeq']
+  G [label = 'SortedSet']
+  H [label = 'BitSet']
+  I [label = 'SortedMap']
+  
+  A-> B -> {C,D,E}
+  C->{F1, F2}
+  D->G->H
+  E->I
+  }") 
+load_image("images/seq.svg")
+```
+
+## Sequence Type
+
+The `Seq` trait represents sequences. A sequence is a type of iterable with a length and elements with fixed index positions beginning at 0.
+`Seq` Collection divided to type of immutable and mutable.
+The following figure shows all `Seq` collections in package `scala.collection.immutable`.
+
+```{r,fig.align='center',fig.cap="Immutable Seq Data Collections"}
+graph <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]  
+  node [shape = oval, style = filled]
+  edge[ color = DeepSkyBlue]
+  node [color = Pink, fillcolor = Pink]
+  B1 B2 B3 C1 C2 C3 C4
+  
+  node [color = DeepSkyBlue, fillcolor = AliceBlue]
+  A B C
+  
+  A [label = 'Seq']
+  B [label = 'IndexedSeq']
+  B1 [label = 'Vector']
+  B2 [label = 'Range']
+  B3 [label = 'String']
+  C [label =  'LinearSeq']
+  C1 [label =  'List']
+  C2 [label =  'Stack']
+  C3 [label =  'Stream']
+  C4 [label =  'Queue']
+  A-> {B,C}
+  B->{B1, B2, B3}
+  C->{C1,C2,C3,C4}
+  }") 
+
+graph %>%
+    export_svg() %>% charToRaw() %>% rsvg_svg("images/Immutable.svg")
+knitr::include_graphics("images/Immutable.svg")
+```
+
+And the following figure shows `Seq` collections in package `scala.collection.mutable`.
+
+```{r, fig.align='center', fig.cap="Mutable Seq Data Collections Part 1"}
+graph <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]  
+  node [shape = oval, style = filled]
+  edge[ color = DeepSkyBlue]
+  node[ color = Pink, fillcolor = Pink]
+  B C B1 D1 D3 D4 D5 
+  
+  node [color = DeepSkyBlue, fillcolor = AliceBlue]
+  A D D2 
+  
+  A [label = 'Seq']
+  B [label = 'Stack']
+  B1 [label = 'SynchronizedStack']
+  C [label = 'ArrayStack']
+  D [label = 'LinearSeq']
+  D1 [label =  'MutableList']
+  D2 [label =  'Queue']
+  D3 [label =  'SynchronizedQueue']
+  D4 [label =  'LinkedList']
+  D5 [label =  'DoubleLinkedList']
+  A-> {B, C, D}
+  B->B1
+  D->{D1, D2, D3, D4, D5}
+  }") 
+
+graph %>%
+    export_svg() %>% charToRaw() %>% rsvg_svg("images/Mutable1.svg")
+knitr::include_graphics("images/Mutable1.svg")
+```
+
+
+
+```{r, fig.align='center', fig.cap="Mutable Seq Data Collections Part 2"}
+graph <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]  
+  node [shape = oval, style = filled]
+  edge[ color = DeepSkyBlue]
+  node[ color = Pink, fillcolor = Pink]
+  E1 E2 E3 F1
+  
+  node [color = DeepSkyBlue, fillcolor = AliceBlue]
+  A E E3 F F2 F3
+  
+  A [label = 'Seq']
+  E [label =  'IndexedSeq']
+  E1 [label =  'ArraySeq']
+  E2 [label =  'StringBuilder']
+  E3 [label =  'ArrayBuffer']
+  F [label =  'Buffer']
+  F1 [label =  'ListBuffer']
+  F2 [label =  'ObservableBuffer']
+  F3 [label =  'SynchronizedBuffer']
+  A-> { E, F}
+  E->{E1, E2, E3}
+  F->{F1, F2, F3, E3}
+  }") 
+
+graph %>%
+    export_svg() %>% charToRaw() %>% rsvg_svg("images/Mutable2.svg")
+knitr::include_graphics("images/Mutable2.svg")
+```
+
+
+Before seeing the collection benchmark tables, it is useful to review the collection definition and its properties.
+
+```{r sequence}
+sequence <- tibble::tribble(
+  ~Immutability, ~Collection, ~head, ~tail, ~apply, ~update, ~prepend, ~append, ~insert,
+    "Immutable", "List",   "C",   "C",    "L",     "L",      "C",     "L",      NA,
+    "Immutable", "Stream",   "C",   "C",    "L",     "L",      "C",     "L",      NA,
+    "Immutable", "Vector",  "eC",  "eC",   "eC",    "eC",     "eC",    "eC",      NA,
+    "Immutable", "Stack",   "C",   "C",    "L",     "L",      "C",     "C",     "L",
+    "Immutable", "Queue",  "aC",  "aC",    "L",     "L",      "L",     "C",      NA,
+    "Immutable", "Range",   "C",   "C",    "C",      NA,       NA,      NA,      NA,
+    "Immutable", "String",   "C",   "L",    "C",     "L",      "L",     "L",      NA,
+    "Mutable", "ArrayBuffer",  "C",  "L",  "C",  "C",   "L",  "aC",  "L",
+    "Mutable", "ListBuffer", "C", "L", "L", "L",  "C",  "C", "L",
+    "Mutable", "StringBuilder", "C", "L", "C", "C",  "L", "aC", "L",
+    "Mutable", "MutableList", "C", "L", "L", "L",  "C",  "C", "L",
+    "Mutable", "Queue", "C", "L", "L", "L",  "C",  "C", "L",
+    "Mutable", "ArraySeq", "C", "L", "C", "C",  "-",  "-", "-",
+    "Mutable", "Stack", "C", "L", "L", "L",  "C",  "L", "L",
+    "Mutable", "ArrayStack", "C", "L", "C", "C", "aC",  "L", "L",
+    "Mutable", "Array", "C", "L", "C", "C",  "-",  "-", "-"
+  )
+```
+
+```{r}
+sequence_description <- tibble::tribble(
+  ~Immutability, ~Collection, ~description, 
+    "Immutable", "List", "A List is a collection that contains immutable data. The Scala List class holds a sequenced, linear list of items.",
+  
+    "Immutable", "Stream", "The Stream is a lazy list where elements are evaluated only when they are needed. Streams have the same performance characteristics as lists.",
+  
+  "Immutable", "Vector", "Vectors in Scala are immutable data structures providing random access for elements and is similar to the list. But, the list has incompetence of random access of elements.",
+  
+  "Immutable", "Queue", "A Queue is a first-in, first-out (FIFO) data structure. Scala offers both an immutable queue and a mutable queue. A mutable queue can be updated or extended in place. It means one can change, add, or remove elements of a queue as a side effect. Queue is implemented as a pair of lists. One is used to insert the elements and the second to contain deleted elements. Elements are added to the first list and removed from the second list. The two most basic operations of Queue are Enqueue and Dequeue.",
+  
+  "Immutable", "Stack", "A Stack is a data structure that follows the last-in, first-out(LIFO) principle. We can add or remove element only from one end called top. Scala has both mutable and immutable versions of a stack.",
+  
+  "Immutable", "Range","The Range can be defined as an organized series of uniformly separated Integers. It is helpful in supplying more strength with fewer methods, so operations performed here are very quick.",
+  
+  "Immutable", "String","A string is a sequence of characters. In Scala, objects of String are immutable which means they are constant and cannot be changed once created.",
+  
+  "Mutable", "ArrayBuffer","To create a mutable, indexed sequence whose size can change, the ArrayBuffer class is used. Internally, an ArrayBuffer is an Array of elements, as well as the store’s current size of the array. When an element is added to an ArrayBuffer, its size is checked. If the underlying array isn’t full, then the element is directly added to the array. If the underlying array is full, then a larger array is constructed and all the elements are copied to the new array. The key is that the new array is constructed larger than what is required for the current addition.",
+  
+  "Mutable", "ListBuffer", "The ListBuffer object is convenient when we want to build a list from front to back. It supports efficient prepend and append operations. The time taken to convert the ListBuffer into a List is constant.",
+  
+  "Mutable", "StringBuilder", "A String object is immutable. When you need to perform repeated modifications to a string, we need a StringBuilder class. A StringBuilder is utilized to append input data to the internal buffer. Numerous operations like appending data, inserting data, and removing data are supported in StringBuilder.",
+  
+  "Mutable", "MutableList", "A MutableList consists of a single linked list together with a pointer that refers to the terminal empty node of that list. This makes list append a constant time operation because it avoids having to traverse the list in search for its terminal node.",
+  
+  "Mutable", "ArraySeq", "Array sequences are mutable sequences of a fixed size that store their elements internally in an Array[Object]. You would typically use an ArraySeq if you want an array for its performance characteristics, but you also want to create generic instances of the sequence where you do not know the type of the elements and you do not have a ClassTag to provide them at run-time.",
+  
+  "Mutable", "ArrayStack", "An ArrayStack is a MutableStack that contains a FastList of data. ArrayStack iterates from top to bottom (LIFO order). The backing data structure grows and shrinks by 50% at a time, and size is constant. ArrayStack does not extend Vector, as does the Java Stack, which was one of the reasons for creating this data structure.",
+  
+  "Mutable", "Array", "Array is a special mutable kind of collection in Scala. it is a fixed size data structure that stores elements of the same data type."
+)
+```
+
+```{r}
+flextable(sequence_description) %>% 
+  set_caption(caption = "Collection Types and Descriptions") %>% 
+  merge_v(j = "Immutability") %>% 
+  autofit()
+```
+
+### Benchmark Codes
+
+We created a Scala project with a sbt for assessment data collection.
+
+```{sbt, eval = FALSE, echo = T}
+// build.sbt
+scalaVersion := "2.12.3"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "3.1.2"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.1.2"
+enablePlugins(PackPlugin)
+```
+
+To calculate the size of an object, I find `org.apache.spark.util.SizeEstimator.estimate`  function is useful.
+This function estimates the sizes of Java objects (number of bytes of memory they occupy). 
+
+```{scala, eval = FALSE, echo = TRUE}
+import org.apache.spark.sql._
+import org.apache.spark.sql.functions.col
+import org.apache.spark.util.SizeEstimator.estimate
+import scala.collection.AbstractSeq
+import scala.collection.mutable
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+```
+
+To create a result dataframe and write the result, we use Spark (it is not necessary).
+
+```{scala, eval = FALSE, echo = TRUE}
+val spark = SparkSession
+  .builder()
+  .appName("Collection_Benchmark")
+  .master("local[2]")
+  .getOrCreate()
+
+import spark.implicits._
+```
+
+We need a time-elapsing function to calculate run time, so use 'System.nanoTime` to measure time in nano resolution.
+
+```{scala, eval = FALSE, echo = TRUE}
+def timeElapsing(benchmarkFunction: => Unit, message:Boolean = false)(times:Int = 1): Double = {
+  if(message) println("Benchmark: IS Starting ...")
+  val startTime = System.nanoTime()
+  for (_ <- 0 until times)
+    benchmarkFunction
+  val endTime = System.nanoTime()
+  val timeElapsed = (endTime - startTime).toDouble / times.toDouble
+  if(message) println(s"Operation Took $timeElapsed ms on average")
+  timeElapsed
+}
+```
+
+Among all the data collections, only some of them have an `insert` method. We define `insertTime` function only for these collections, as you see below.
+
+```{scala, eval = FALSE, echo = TRUE}
+def insertTime(x:AbstractSeq[Int], n:Int, m:Int):Double = x match {
+  case x:ArrayBuffer[Int] => timeElapsing(x.updated(m,0))(n)
+  case x:ListBuffer[Int] => timeElapsing(x.updated(m,0))(n)
+  case x:mutable.MutableList[Int] => timeElapsing(x.updated(m,0))(n)
+  case x:mutable.Queue[Int] => timeElapsing(x.updated(m,0))(n)
+  case x:mutable.ArrayStack[Int] => timeElapsing(x.updated(m,0))(n)
+  case _ => -1
+}
+```
+
+The main parts of the benchmark are `benchmark***` functions, which contain the time-elapsed of the main methods.
+
+```{scala, eval = FALSE, echo = TRUE}
+def benchmarkSeq(x:AbstractSeq[Int], n:Int, m:Int): Map[String, Double] = {
+  Map(
+    "volume" -> estimate(x),
+    "head" -> timeElapsing(x.head)(n),
+    "tail" -> timeElapsing(x.tail)(n),
+    "apply" -> timeElapsing(x.apply(m))(n),
+    "update" -> timeElapsing(x.updated(m,0))(n),
+    "prepend" -> timeElapsing(0+:x)(n),
+    "append" -> timeElapsing(x:+0)(n),
+    "insert" -> insertTime(x, n, m)
+  )
+}
+```
+
+Similar to `benchmarkSeq` we define `benchmarkString`, `benchmarkStringBuilder` and
+`benchmarkArray` functions.
+
+To calculate correct time elapsing related to Array we define `Array[Object]`
+
+```{scala, eval = FALSE, echo = TRUE}
+def obj = new Object()
+def benchmarkArrayBoxed(x:Array[Object], n:Int, m:Int): Map[String, Double] =  { Map(
+  "volume" -> estimate(x),
+  "head" -> timeElapsing(x.head)(n),
+  "tail" -> timeElapsing(x.tail)(n),
+  "apply" -> timeElapsing(x.apply(m))(n),
+  "update" -> timeElapsing(x.updated(m,0))(n),
+  "prepend" -> timeElapsing(obj+:x)(n),
+  "append" -> timeElapsing(x:+obj)(n),
+  "insert" -> timeElapsing(x.updated(m,0))(n))
+}
+```
+
+When determining the size of objects, we consider two measurements: size and method. Objects with a length of $16^0,16^1,..., 16^5$ are generated to find their size. For checking the performance of methods, objects with a size of $10000, 200000,..., 1000000$ are generated.
+
+```{scala, eval = FALSE, echo = TRUE}
+val sizes = ( 0 to 5).map(x => math.pow(16,x).toInt) ++ (1 to 10).map(_*100000)
+```
+
+As you can see below, each method is run 100 times on objects, and the results are collected.
+
+```{scala, eval = FALSE, echo = TRUE}
+val stats = for(s <- sizes) yield {
+  val integers = 0 until s
+  List(
+    ("Immutable_List", integers.toList),
+    ("Immutable_Stream", integers.toStream),
+    ("Immutable_Vector", integers.toVector),
+    ("Immutable_Queue", scala.collection.immutable.Queue(integers: _*)),
+    ("Immutable_Range", integers),
+    ("Immutable_String", "1" * s),
+    ("Mutable_ArrayBuffer", scala.collection.mutable.ArrayBuffer(integers: _*)),
+    ("Mutable_ListBuffer", scala.collection.mutable.ListBuffer(integers: _*)),
+    ("Mutable_StringBuilder", new scala.collection.mutable.StringBuilder("1" * s)),
+    ("Mutable_MutableList", scala.collection.mutable.MutableList(integers: _*)),
+    ("Mutable_Queue", scala.collection.mutable.Queue(integers: _*)),
+    ("Mutable_ArraySeq", scala.collection.mutable.ArraySeq(integers: _*)),
+    ("Mutable_ArrayStack", scala.collection.mutable.ArrayStack(integers: _*)),
+    ("Mutable_Array", integers.toArray),
+    ("Mutable_Boxed_Array", {
+      val boxedArray = new Array[Object](s)
+      var i = 0
+      while (i < s) {
+        boxedArray(i) = obj; i += 1
+      }
+      boxedArray
+    })
+
+  ).map {
+    case (c, cl: AbstractSeq[Int]) => Map("size" -> s.toString, "collection" -> c) ++ 
+    benchmarkSeq(cl, 100, s - 1).map(x => (x._1, x._2.toString))
+    case (c, cl: Array[Object]) => Map("size" -> s.toString, "collection" -> c) ++ 
+    benchmarkArrayBoxed(cl, 100, s - 1).map(x => (x._1, x._2.toString))
+    case (c, cl: Array[Int]) => Map("size" -> s.toString, "collection" -> c) ++ 
+    benchmarkArray(cl, 100, s - 1).map(x => (x._1, x._2.toString))
+    case (c, cl: String) => Map("size" -> s.toString, "collection" -> c) ++ 
+    benchmarkString(cl, 100, s - 1).map(x => (x._1, x._2.toString))
+    case (c, cl: StringBuilder) => Map("size" -> s.toString, "collection" -> c) ++ 
+    benchmarkStringBuilder(cl, 100, s - 1).map(x => (x._1, x._2.toString))
+  }
+}
+```
+
+The last step is writing the results as a csv file with `spark.write`.
+
+```{scala, eval = FALSE, echo = TRUE}
+val colNames = stats(0).head.toList.sortBy(_._1).map(_._1)
+  .zipWithIndex.map(x => col("value")(x._2).as(x._1))
+
+stats.flatten.map(x => x.toList.sortBy(_._1).map(_._2))
+  .toDF.select(colNames:_*)
+  .coalesce(1).write.option("header","true").mode("overwrite")
+  .csv("./collection_seq_size_benchmark.csv")
+```
+
+### Object Size in Memory
+
+```{r collection_size_benchmark}
+stats <- list.files("collection_size_benchmark.csv",pattern = "*.csv",full.names = T) %>% 
+  readr::read_csv(.) %>% 
+  mutate(Immutability = stringr::str_split_fixed(collection,"_",2)[,1]) %>% 
+  mutate(Collection = gsub("Immutable_|Mutable_","",collection)) %>% 
+  select(-collection) %>% 
+  mutate(Collection = if_else(Collection == "Boxed_Array","Array[Object]", Collection))
+```
+
+The benchmark data is now available! The table below displays the expected size of various collections of different sizes in bytes.
+
+```{r}
+collection_size <- stats %>% 
+  filter(size %in% 16^(0:5)) %>% 
+  select(Immutability, Collection,size, volume) %>% 
+  spread(size, volume)
+colnames(collection_size)[3:8] = scales::comma(16^(0:5))
+flextable(collection_size ) %>% 
+  merge_v(j = "Immutability") %>% 
+  set_caption(caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)") %>% 
+  flextable::theme_vanilla()
+```
+
+```{r}
+stats %>% 
+  filter(size %in% 16^(0:5)) %>% 
+  select(Immutability, Collection,size, volume) %>% 
+  group_by(Immutability,Collection) %>%
+  summarise(ave_size = round(mean(volume/size),0)) %>% 
+  filter(!(Collection %in% c("Range", "Stream"))) -> collection_volume
+```
+
+The average memory size of each object is calculated and shown below.
+
+```{r}
+library(echarts4r)
+collection_volume %>%
+  arrange(desc(Collection)) %>% 
+  e_charts(Collection) %>% 
+  e_bar(ave_size) %>% 
+  e_flip_coords() %>%
+  e_axis_labels(x = "Collection", y = "Volume") %>% 
+  e_title("Average Collection[Int] Volume in Bytes") %>% 
+  e_tooltip(trigger = "axis", textStyle = list(color = "#ffffff")) %>% 
+  e_theme("shine")
+```
+
+### Methods Performance
+
+Before seeing the benchmark result, it is better to have an overview of the methods that are applied to objects. The below table has more details.
+
+```{r sequence_operation}
+sequence_operation <- tibble::tribble(
+  ~operations, ~description, 
+"head",	"Selecting the first element of the sequence.",
+"tail",	"Producing a new sequence that consists of all elements except the first one.",
+"apply",	"Indexing.",
+"update",	"Functional update (with updated) for immutable sequences, side-effecting update (with update for mutable sequences).",
+"prepend",	"Adding an element to the front of the sequence. For immutable sequences, this produces a new sequence. For mutable sequences it modifies the existing sequence.",
+"append",	"Adding an element and the end of the sequence. For immutable sequences, this produces a new sequence. For mutable sequences it modifies the existing sequence.",
+"insert",	"Inserting an element at an arbitrary position in the sequence. This is only supported directly for mutable sequences."
+)
+```
+
+
+```{r}
+flextable(sequence_operation) %>% 
+  set_caption(caption = "Operations That Are Tested on Sequence Types") %>% 
+  autofit()
+```
+
+We can find performance characteristics of Scala collections in the [Scala documents](https://docs.scala-lang.org/overviews/collections/performance-characteristics.html). The Scala performance table is provided below for comparison with the empirical results.
+
+```{r}
+flextable(sequence) %>% 
+  merge_v(j = "Immutability") %>% 
+  set_caption(caption = "Performance characteristics of sequence types") %>% 
+  flextable::theme_vanilla()
+```
+
+```{r type_performance}
+type_performance <- tibble::tribble(
+  ~performance, ~description, 
+"C",	"The operation takes (fast) constant time.",
+"eC",	"The operation takes effectively constant time, but this might depend on some assumptions such as maximum length of a vector or distribution of hash keys.",
+"aC",	"The operation takes amortized constant time. Some invocations of the operation might take longer, but if many operations are performed on average only constant time per operation is taken.",
+"Log",	"The operation takes time proportional to the logarithm of the collection size.",
+"L",	"The operation is linear, that is it takes time proportional to the collection size.",
+"-",	"The operation is not supported.")
+```
+
+```{r}
+flextable(type_performance) %>% 
+  set_caption(caption = "Performance characteristics of sequence types") %>% 
+  autofit()
+```
+
+```{r}
+stats = stats %>% 
+  filter(!(size %in% 16^(0:5))) %>% 
+  select(-volume) %>%
+  gather("method","time",-Immutability,-size,-Collection) %>% 
+  filter(time>0) %>% 
+  arrange(size) %>% 
+  mutate(method = fct_relevel(method, "head","tail","prepend","apend","apply","update","insert")) %>% 
+  mutate(time = round(time/1000)) %>% 
+  group_by(Immutability, Collection, method) %>% 
+  mutate(time = if_else(size == 100000, min(time),time))
+```
+
+The performance results of each method and collection are plotted as a scatter plot. We add a regression line to the plot to see the growth rate. The plot below shows the performance of the immutable collection.
+
+```{r, fig.width=15, fig.height=7, dev="svg", fig.cap = "Immutable Collection Methods Performance"}
+library(MPIThemes)
+MPIThemes::set_color_theme()
+
+stats %>% 
+  filter(Immutability == "Immutable") %>% 
+  ggplot(aes(size, time))+
+  geom_point()+
+  geom_smooth(method = lm,se = FALSE)+
+  facet_grid(method~Collection,scales = "free")+
+  scale_y_continuous(labels = scales::comma)+
+  scale_x_continuous(breaks = seq(1,5)*200000, labels = c("200K","400K","600K","800K","1M"))+
+  labs(y = NULL, x = NULL)
+```
+
+A similar plot is plotted for mutable collection.
+
+```{r, fig.width=15, fig.height=9, dev="svg", fig.cap = "Mutable Collection Methods Performance"}
+stats %>% 
+  filter(!(size %in% 16^(0:5))) %>% 
+  filter(Immutability == "Mutable") %>%
+  mutate(time = if_else(Collection == "Array[Object]" & method == "head",0,time)) %>% 
+  ggplot(aes(size, time))+
+  geom_point()+
+  geom_smooth(method = lm,se = FALSE)+
+  facet_grid(method~Collection,scales = "free")+
+  scale_y_continuous(labels = scales::comma)+
+  scale_x_continuous(breaks = seq(1,5)*200000, labels = c("200K","400K","600K","800K","1M"))+
+  labs(y = NULL, x = NULL)
+```
+
+In this post, we try to understand the size and performance of the `Sets` and `Maps` data collection. In the first, we review the structure of the Mutable and Immutabla `Sets` and `Maps`collections.
+
+```{r,fig.align='center',fig.cap="Immutable Maps and Sets Data Collection"}
+graph <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TB]  
+  node [shape = oval, style = filled]
+  edge[ color = DeepSkyBlue]
+  
+  node [color = Pink, fillcolor = Pink]
+  C1 C2 D1 D2 D31 C31
+  
+  node [color = DeepSkyBlue, fillcolor = AliceBlue]
+  A B C D C3 C32 D3
+  A [label = 'Traversable']
+  B [label = 'Iterable']
+  C [label =  'Set']
+  C1 [label =  'HashSet']
+  C2 [label =  'ListSet']
+  C3 [label =  'SortedSet']
+  C31 [label =  'TreeSet']
+  C32 [label =  'BitSet']
+  D [label = 'Map']
+  D1 [label = 'HashMap']
+  D2 [label = 'ListMap']
+  D3 [label = 'SortedMap']
+  D31 [label = 'TreeMap']
+
+  A-> B -> {C,D}
+  C->{C1, C2, C3}
+  C3->{C31,C32}
+  D->{D1, D2, D3}
+  D3->D31
+  }") 
+load_image("images/map_set.svg")
+```
+
+
+```{r,fig.align='center',fig.cap="Mutable Maps Data Collection"}
+graph <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TD]  
+  nodesep=0.3;
+  ranksep=0.2;
+  margin=0.1;
+  node [shape = oval, style = filled]
+  edge[ color = DeepSkyBlue]
+  node [color = Pink, fillcolor = Pink]
+  A B C D E F G
+  
+  node [color = DeepSkyBlue, fillcolor = AliceBlue]
+  S 
+  
+  S [label = 'Map']
+  A [label = 'HashMap']
+  B [label = 'OpenHashMap']
+  C [label = 'WeakHashMap']
+  D [label = 'LinkedHashMap']
+  E [label = 'ListMap']
+  F [label = 'TreeMap']
+  G [label = 'ImmutableMapAdaptor']
+
+  S -> {A, B, C}
+  S -> {D, E, F, G}
+  }") 
+load_image("images/maps.svg")
+```
+
+
+```{r,fig.align='center',fig.cap="Mutable Sets Data Collection"}
+graph <- DiagrammeR::grViz("digraph {
+  graph [layout = dot, rankdir = TD]  
+  node [shape = oval, style = filled]
+  edge[ color = DeepSkyBlue]
+  node [color = Pink, fillcolor = Pink]
+  A B C
+  
+  node [color = DeepSkyBlue, fillcolor = AliceBlue]
+  S D E F G
+  
+  S [label = 'Set']
+  A [label = 'HashSet']
+  B [label = 'ImmutableSetAdaptor']
+  C [label = 'LinkedHashSet']
+  D [label = 'ObservableSet']
+  E [label = 'SynchronizedSet']
+  F [label = 'SortedSet']
+  G [label = 'BitSet']
+
+  S -> {A, B, C, D, E, F}
+  F -> G
+  }") 
+load_image("images/sets.svg")
+```
+A quick review of each collection application may be found in the table below.
+
+```{r}
+map_sets_description <- tibble::tribble(
+  ~Collection, ~description, 
+  "HashSet", "A concrete implementation of Set semantics is HashSet. The element's hashCode will be used as a key in the HashSet, allowing for a quick lookup of the element's value. HashSet has immutable and mutable type",
+  
+  "HashMap", "The Scala Collection includes mutable and immutable HashMap. It's used to save and return a map of elements. A HashMap is a Hash Table data structure that stores a collection of key and value pairs. It implements Map in its most basic form.",
+  
+  "TreeSet", "A set is a data structure that allows us to store distinct components. The Set does not provide element ordering, but a TreeSet will create items in a specific order. TreeSet includes two types in Scala: scala.collection.mutable.TreeSet and scala.collection.immutable.TreeSet.",
+  
+  "TreeMap", "TreeMap is useful when performing range queries or traversing in order, whereas the map does not keep order. If you only need key lookups and don't care in which order key-values are traversed, Map will suffice, which will generally have better performance.",
+  
+  "BitSet", "Bitsets are collections of non-negative integers that are expressed as 64-bit words with variable-size arrays of bits. The greatest number stored in a bitset determines its memory footprint. There are two versions of BitSet in Scala: scala.collection.immutable.BitSet and scala.collection.mutable.BitSet.",
+  
+  "ListMap", "A ListMap is a collection of key and value pairs where the keys are backed by a List data structure. ListMap collections are used only for a small number of elements.",
+  
+  "WeakHashMap", "A weak hash map is a special kind of hash map where the garbage collector does not follow links from the map to the keys stored in it. This means that a key and its associated value will disappear from the map if there is no other reference to that key. Weak hash maps are useful for tasks such as caching, where you want to re-use an expensive function's result if the function is called again on the same key."
+)
+```
+
+```{r}
+flextable(map_sets_description) %>% 
+  set_caption(caption = "Maps and Sets Data Collections") %>% 
+  autofit()
+```
+
+### Benchmark Codes
+
+The benchmark codes in this section are more similar to the `Seq` Collection benchmark codes from a previous post. Only the benchmark functions for `Sets` and `Maps` are different.
+The `Map` benchmark code can be found here.
+
+```{scala, eval = FALSE, echo = TRUE}
+  def benchmarkMap(x:scala.collection.Map[Int,Int], n:Int, m:Int): Map[String, Double] = {
+    Map(
+      "volume" -> estimate(x),
+      "lookup" -> timeElapsing(x.get(m))(n),
+      "add" -> timeElapsing(x ++ Map((m,m)))(n),
+      "remove" -> timeElapsing(x-0)(n),
+      "min" -> timeElapsing(x.minBy(_._2)._1)(n)
+    )
+  }
+```
+
+Similar to `Map`, we define a benchmark function for `Set`.
+
+```{scala, eval = FALSE, echo = TRUE}
+  def benchmarkSet(x:scala.collection.Set[Int], n:Int, m:Int): Map[String, Double] = {
+    Map(
+      "volume" -> estimate(x),
+      "lookup" -> timeElapsing(x.contains(m))(n),
+      "add" -> timeElapsing(x ++ Map((m,m)))(n),
+      "remove" -> timeElapsing(x-0)(n),
+      "min" -> timeElapsing(x.min)(n)
+    )
+  }
+```
+
+In the below code, the definition of each collection can be found.
+
+```{scala, eval = FALSE, echo = TRUE}
+  val stats: Seq[List[Map[String, String]]] = for(s <- sizes) yield {
+    val integers = 0 until s
+    List(
+      ("Immutable_HashMap", integers.zipWithIndex.toMap),
+      ("Immutable_TreeMap", scala.collection.immutable.TreeMap(integers.zipWithIndex:_*)),
+      ("Immutable_ListMap",scala.collection.immutable.ListMap(integers.zipWithIndex:_*)),
+      ("Mutable_HashMap", scala.collection.mutable.HashMap(integers.zipWithIndex:_*)),
+      ("Mutable_WeakHashMap",scala.collection.mutable.WeakHashMap(integers.zipWithIndex:_*))
+    ).map(x => {
+      Map("size" -> s.toString, "collection" -> x._1) ++ 
+        benchmarkMap(x._2, 100, s).map(x => (x._1, x._2.toString))
+    }) ++  List(
+      ("Immutable_HashSet", integers.toSet),
+      ("Immutable_TreeSet", scala.collection.immutable.TreeSet(integers:_*)),
+      ("Immutable_BitSet", scala.collection.immutable.BitSet(integers:_*)),
+      ("Mutable_HashSet", scala.collection.mutable.HashSet(integers:_*)),
+      ("Mutable_BitSet", scala.collection.mutable.BitSet(integers:_*)),
+      ("Mutable_TreeSet", scala.collection.mutable.TreeSet(integers:_*))
+    ).map(x => {
+      Map("size" -> s.toString, "collection" -> x._1) ++ 
+        benchmarkSet(x._2, 100, s).map(x => (x._1, x._2.toString))
+    })
+
+  }
+```
+
+### Object Size in Memory
+
+
+```{r }
+stats <- list.files("collection_Set_Map_size_benchmark.csv/",pattern = "*.csv",full.names = T) %>% 
+  readr::read_csv(.) %>% 
+  mutate(Immutability = stringr::str_split_fixed(collection,"_",2)[,1]) %>% 
+  mutate(Collection = gsub("Immutable_|Mutable_","",collection)) %>% 
+  select(-collection) %>% 
+  filter(Collection!= "BitSet")
+```
+
+The benchmark information is now ready. 
+The table below shows the estimated size in bytes of various collections of varied sizes.
+
+```{r}
+collection_size <- stats %>% 
+  filter(size %in% 16^(0:5)) %>% 
+  select(Immutability, Collection,size, volume) %>% 
+  spread(size, volume)
+colnames(collection_size)[3:8] = scales::comma(16^(0:5))
+flextable(collection_size ) %>% 
+  merge_v(j = "Immutability") %>% 
+  set_caption(caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)") %>% 
+  flextable::theme_vanilla()
+```
+
+```{r}
+stats %>% 
+  filter(size %in% 16^(0:5)) %>% 
+  select(Immutability, Collection,size, volume) %>% 
+  group_by(Immutability,Collection) %>%
+  summarise(ave_size = round(mean(volume/size),0)) %>% 
+  filter(!(Collection %in% c("Range", "Stream"))) -> collection_volume
+```
+
+The average memory size of each object is calculated and shown below.
+
+```{r}
+library(echarts4r)
+collection_volume %>%
+  arrange(desc(Collection)) %>% 
+  e_charts(Collection) %>% 
+  e_bar(ave_size) %>% 
+  e_flip_coords() %>%
+  e_axis_labels(x = "Collection", y = "Volume") %>% 
+  e_title("Average Collection[Int] Volume in Bytes") %>% 
+  e_tooltip(trigger = "axis", textStyle = list(color = "#ffffff")) %>% 
+  e_theme("shine")
+```
+
+### Methods Performance
+
+The table below contains a list of the data collection methods used.
+
+
+```{r}
+map_set_operation <- tibble::tribble(
+  ~operations, ~description, 
+"lookup",	"Testing whether an element is contained in set, or selecting a value associated with a key.",
+"add",	"Adding a new element to a set or key/value pair to a map.",
+"remove",	"Removing an element from a set or a key from a map.",
+"min",	"The smallest element of the set, or the smallest key of a map."
+)
+
+flextable(map_set_operation) %>% 
+  set_caption(caption = "Operations That Are Tested on Maps ans Sets") %>% 
+  autofit()
+```
+
+Scala collection performance characteristics can be found in the [Scala documents](https://docs.scala-lang.org/overviews/collections/performance-characteristics.html). For comparison with the empirical results, the Scala performance table is given below.
+
+```{r}
+immutable_map_set <- tibble::tribble(
+    ~Immutability, ~Collection, ~lookup, ~add, ~remove, ~min,
+    "Immutable", "HashSet/HashMap",    "eC",  "eC",    "eC",   "L",
+    "Immutable", "TreeSet/TreeMap",   "Log", "Log",   "Log", "Log",
+    "Immutable", "BitSet",     "C",   "L",     "L", "eC1",
+    "Immutable", "ListMap",     "L",   "L",     "L",   "L",
+    "Mutable", "HashSet/HashMap","eC", "eC","eC","L",
+    "Mutable", "WeakHashMap", "eC", "eC", "eC", "L",
+    "Mutable", "BitSet", "C", "aC", "C","eC",
+    "Mutable", "TreeSet", "Log", "Log", "Log", "Log"
+  )
+flextable(immutable_map_set) %>% 
+    merge_v(j = "Immutability") %>% 
+  set_caption(caption = "Performance Characteristics of Immutable Maps and Sets")
+```
+
+```{r}
+stats = stats %>% 
+  filter(!(size %in% 16^(0:5))) %>% 
+  select(-volume) %>%
+  gather("method","time",-Immutability,-size,-Collection) %>% 
+  filter(time>0) %>% 
+  arrange(size) %>% 
+  mutate(method = fct_relevel(method, "head","tail","prepend","apend","apply","update","insert")) %>% 
+  mutate(time = round(time/1000)) %>% 
+  group_by(Immutability, Collection, method) %>% 
+  mutate(time = if_else(size == 100000, min(time),time))
+```
+
+The performance results of each method and collection are shown using a scatter plot. We add a regression line to the plot to see the growth rate.
+
+```{r, fig.width=15, fig.height=7, dev="svg", fig.cap = "Immutable Collection Methods Performance"}
+library(MPIThemes)
+MPIThemes::set_color_theme()
+
+stats %>% 
+  filter(Immutability == "Immutable") %>% 
+  ggplot(aes(size, time))+
+  geom_point()+
+  geom_smooth(method = lm,se = FALSE)+
+  facet_grid(method~Collection,scales = "free")+
+  scale_y_continuous(labels = scales::comma)+
+  scale_x_continuous(breaks = seq(1,5)*200000, labels = c("200K","400K","600K","800K","1M"))+
+  labs(y = NULL, x = NULL)
+```
+
+A similar plot is plotted for mutable collection.
+
+```{r, fig.width=15, fig.height=9, dev="svg", fig.cap = "Mutable Collection Methods Performance"}
+stats %>% 
+  filter(!(size %in% 16^(0:5))) %>% 
+  filter(size != 1000000) %>%
+  filter(Immutability == "Mutable") %>%
+  ggplot(aes(size, time))+
+  geom_point()+
+  geom_smooth(method = lm,se = FALSE)+
+  facet_grid(method~Collection,scales = "free")+
+  scale_y_continuous(labels = scales::comma)+
+  scale_x_continuous(breaks = seq(1,5)*200000, labels = c("200K","400K","600K","800K","1M"))+
+  labs(y = NULL, x = NULL)
+```
+
+
+# Refrences
+
+- [Performance Characteristics](https://docs.scala-lang.org/overviews/collections/performance-characteristics.html)
+- [Benchmarking Scala Collections](https://www.lihaoyi.com/post/BenchmarkingScalaCollections.html)
