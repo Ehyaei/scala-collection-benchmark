@@ -13,6 +13,7 @@ library(DiagrammeRsvg)
 library(rsvg)
 library(knitr)
 knitr::opts_chunk$set(echo = FALSE, comment = " ",
+                      fig.path = "images/",
                       message = FALSE, warning = FALSE, error = FALSE)
 load_image <- function(path){
 graph %>%

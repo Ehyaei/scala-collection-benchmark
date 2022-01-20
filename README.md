@@ -222,7 +222,7 @@ expected size of various collections of different sizes in bytes.
 
 The average memory size of each object is calculated and shown below.
 
-![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](images/unnamed-chunk-19-1.png)<!-- -->
 
 ### Methods Performance
 
@@ -241,12 +241,11 @@ scatter plot. We add a regression line to the plot to see the growth
 rate. The plot below shows the performance of the immutable collection.
 
 ![Immutable Collection Methods
-Performance](README_files/figure-gfm/unnamed-chunk-24-1.svg)
+Performance](images/unnamed-chunk-24-1.svg)
 
 A similar plot is plotted for mutable collection.
 
-![Mutable Collection Methods
-Performance](README_files/figure-gfm/unnamed-chunk-25-1.svg)
+![Mutable Collection Methods Performance](images/unnamed-chunk-25-1.svg)
 
 In this post, we try to understand the size and performance of the
 `Sets` and `Maps` data collection. In the first, we review the structure
@@ -329,7 +328,7 @@ estimated size in bytes of various collections of varied sizes.
 
 The average memory size of each object is calculated and shown below.
 
-![](README_files/figure-gfm/unnamed-chunk-37-1.png)<!-- -->
+![](images/unnamed-chunk-37-1.png)<!-- -->
 
 ### Methods Performance
 
@@ -345,12 +344,11 @@ scatter plot. We add a regression line to the plot to see the growth
 rate.
 
 ![Immutable Collection Methods
-Performance](README_files/figure-gfm/unnamed-chunk-41-1.svg)
+Performance](images/unnamed-chunk-41-1.svg)
 
 A similar plot is plotted for mutable collection.
 
-![Mutable Collection Methods
-Performance](README_files/figure-gfm/unnamed-chunk-42-1.svg)
+![Mutable Collection Methods Performance](images/unnamed-chunk-42-1.svg)
 
 # Refrences
 
