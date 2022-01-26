@@ -41,6 +41,9 @@ Before seeing the collection benchmark tables, it is useful to review
 the collection definition and its properties.
 
 <table>
+<caption>
+Collection Types and Descriptions
+</caption>
 <thead>
 <tr>
 <th style="text-align:left;">
@@ -436,6 +439,432 @@ stats.flatten.map(x => x.toList.sortBy(_._1).map(_._2))
 The benchmark data is now available! The table below displays the
 expected size of various collections of different sizes in bytes.
 
+<table>
+<caption>
+Estimated Size of Scala Collections\[Int\] In Different Size (in bytes)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Immutability
+</th>
+<th style="text-align:left;">
+Collection
+</th>
+<th style="text-align:right;">
+1
+</th>
+<th style="text-align:right;">
+16
+</th>
+<th style="text-align:right;">
+256
+</th>
+<th style="text-align:right;">
+4,096
+</th>
+<th style="text-align:right;">
+65,536
+</th>
+<th style="text-align:right;">
+1,048,576
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+List
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:right;">
+656
+</td>
+<td style="text-align:right;">
+10256
+</td>
+<td style="text-align:right;">
+163856
+</td>
+<td style="text-align:right;">
+2621456
+</td>
+<td style="text-align:right;">
+41943056
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Queue
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+680
+</td>
+<td style="text-align:right;">
+10280
+</td>
+<td style="text-align:right;">
+163880
+</td>
+<td style="text-align:right;">
+2621480
+</td>
+<td style="text-align:right;">
+41943080
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Range
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Stream
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+120
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+String
+</td>
+<td style="text-align:right;">
+48
+</td>
+<td style="text-align:right;">
+72
+</td>
+<td style="text-align:right;">
+552
+</td>
+<td style="text-align:right;">
+8232
+</td>
+<td style="text-align:right;">
+131112
+</td>
+<td style="text-align:right;">
+2097192
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Vector
+</td>
+<td style="text-align:right;">
+216
+</td>
+<td style="text-align:right;">
+456
+</td>
+<td style="text-align:right;">
+5448
+</td>
+<td style="text-align:right;">
+84744
+</td>
+<td style="text-align:right;">
+1353192
+</td>
+<td style="text-align:right;">
+21648072
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+Array
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+1040
+</td>
+<td style="text-align:right;">
+16400
+</td>
+<td style="text-align:right;">
+262160
+</td>
+<td style="text-align:right;">
+4194320
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+Array\[Object\]
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+336
+</td>
+<td style="text-align:right;">
+5136
+</td>
+<td style="text-align:right;">
+80400
+</td>
+<td style="text-align:right;">
+1310160
+</td>
+<td style="text-align:right;">
+20970320
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArrayBuffer
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+5160
+</td>
+<td style="text-align:right;">
+80424
+</td>
+<td style="text-align:right;">
+1310184
+</td>
+<td style="text-align:right;">
+20970344
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArraySeq
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+5160
+</td>
+<td style="text-align:right;">
+80424
+</td>
+<td style="text-align:right;">
+1310184
+</td>
+<td style="text-align:right;">
+20970344
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArrayStack
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+5160
+</td>
+<td style="text-align:right;">
+80424
+</td>
+<td style="text-align:right;">
+1310184
+</td>
+<td style="text-align:right;">
+20970344
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ListBuffer
+</td>
+<td style="text-align:right;">
+88
+</td>
+<td style="text-align:right;">
+688
+</td>
+<td style="text-align:right;">
+10288
+</td>
+<td style="text-align:right;">
+163888
+</td>
+<td style="text-align:right;">
+2621488
+</td>
+<td style="text-align:right;">
+41943088
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+MutableList
+</td>
+<td style="text-align:right;">
+88
+</td>
+<td style="text-align:right;">
+688
+</td>
+<td style="text-align:right;">
+10288
+</td>
+<td style="text-align:right;">
+163888
+</td>
+<td style="text-align:right;">
+2621488
+</td>
+<td style="text-align:right;">
+41943088
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+Queue
+</td>
+<td style="text-align:right;">
+88
+</td>
+<td style="text-align:right;">
+688
+</td>
+<td style="text-align:right;">
+10288
+</td>
+<td style="text-align:right;">
+163888
+</td>
+<td style="text-align:right;">
+2621488
+</td>
+<td style="text-align:right;">
+41943088
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+StringBuilder
+</td>
+<td style="text-align:right;">
+96
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+600
+</td>
+<td style="text-align:right;">
+8280
+</td>
+<td style="text-align:right;">
+131160
+</td>
+<td style="text-align:right;">
+2097240
+</td>
+</tr>
+</tbody>
+</table>
+
 The average memory size of each object is calculated and shown below.
 
 ![](images/unnamed-chunk-19-1.png)<!-- -->
@@ -446,11 +875,667 @@ Before seeing the benchmark result, it is better to have an overview of
 the methods that are applied to objects. The below table has more
 details.
 
+<table>
+<caption>
+Operations That Are Tested on Sequence Types
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+operations
+</th>
+<th style="text-align:left;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+head
+</td>
+<td style="text-align:left;">
+Selecting the first element of the sequence.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tail
+</td>
+<td style="text-align:left;">
+Producing a new sequence that consists of all elements except the first
+one.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+apply
+</td>
+<td style="text-align:left;">
+Indexing.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+update
+</td>
+<td style="text-align:left;">
+Functional update (with updated) for immutable sequences, side-effecting
+update (with update for mutable sequences).
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prepend
+</td>
+<td style="text-align:left;">
+Adding an element to the front of the sequence. For immutable sequences,
+this produces a new sequence. For mutable sequences it modifies the
+existing sequence.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+append
+</td>
+<td style="text-align:left;">
+Adding an element and the end of the sequence. For immutable sequences,
+this produces a new sequence. For mutable sequences it modifies the
+existing sequence.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+insert
+</td>
+<td style="text-align:left;">
+Inserting an element at an arbitrary position in the sequence. This is
+only supported directly for mutable sequences.
+</td>
+</tr>
+</tbody>
+</table>
+
 We can find performance characteristics of Scala collections in the
 [Scala
 documents](https://docs.scala-lang.org/overviews/collections/performance-characteristics.html).
 The Scala performance table is provided below for comparison with the
 empirical results.
+
+<table>
+<caption>
+Performance characteristics of sequence types
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Immutability
+</th>
+<th style="text-align:left;">
+Collection
+</th>
+<th style="text-align:left;">
+head
+</th>
+<th style="text-align:left;">
+tail
+</th>
+<th style="text-align:left;">
+apply
+</th>
+<th style="text-align:left;">
+update
+</th>
+<th style="text-align:left;">
+prepend
+</th>
+<th style="text-align:left;">
+append
+</th>
+<th style="text-align:left;">
+insert
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+List
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Stream
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Vector
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Stack
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Queue
+</td>
+<td style="text-align:left;">
+aC
+</td>
+<td style="text-align:left;">
+aC
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Range
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+String
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArrayBuffer
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+aC
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ListBuffer
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+StringBuilder
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+aC
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+MutableList
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+Queue
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArraySeq
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+
+-   </td>
+    <td style="text-align:left;">
+
+    -   </td>
+        <td style="text-align:left;">
+
+        -   </td>
+            </tr>
+            <tr>
+            <td style="text-align:left;">
+            Mutable
+            </td>
+            <td style="text-align:left;">
+            Stack
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:left;">
+            Mutable
+            </td>
+            <td style="text-align:left;">
+            ArrayStack
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+            aC
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            </tr>
+            <tr>
+            <td style="text-align:left;">
+            Mutable
+            </td>
+            <td style="text-align:left;">
+            Array
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+            L
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+            C
+            </td>
+            <td style="text-align:left;">
+
+            -   </td>
+                <td style="text-align:left;">
+
+                -   </td>
+                    <td style="text-align:left;">
+
+                    -   </td>
+                        </tr>
+                        </tbody>
+                        </table>
+
+<table>
+<caption>
+Performance characteristics of sequence types
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+performance
+</th>
+<th style="text-align:left;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+The operation takes (fast) constant time.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+The operation takes effectively constant time, but this might depend on
+some assumptions such as maximum length of a vector or distribution of
+hash keys.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aC
+</td>
+<td style="text-align:left;">
+The operation takes amortized constant time. Some invocations of the
+operation might take longer, but if many operations are performed on
+average only constant time per operation is taken.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Log
+</td>
+<td style="text-align:left;">
+The operation takes time proportional to the logarithm of the collection
+size.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+The operation is linear, that is it takes time proportional to the
+collection size.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+
+-   </td>
+    <td style="text-align:left;">
+    The operation is not supported.
+    </td>
+    </tr>
+    </tbody>
+    </table>
 
 The performance results of each method and collection are plotted as a
 scatter plot. We add a regression line to the plot to see the growth
@@ -474,6 +1559,102 @@ of the Mutable and Immutabla `Sets` and `Maps`collections.
 <img src="images/sets.svg" title="Mutable Sets Data Collection" alt="Mutable Sets Data Collection" style="display: block; margin: auto;" />
 A quick review of each collection application may be found in the table
 below.
+
+<table>
+<caption>
+Maps and Sets Data Collections
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Collection
+</th>
+<th style="text-align:left;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+HashSet
+</td>
+<td style="text-align:left;">
+A concrete implementation of Set semantics is HashSet. The element’s
+hashCode will be used as a key in the HashSet, allowing for a quick
+lookup of the element’s value. HashSet has immutable and mutable type
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HashMap
+</td>
+<td style="text-align:left;">
+The Scala Collection includes mutable and immutable HashMap. It’s used
+to save and return a map of elements. A HashMap is a Hash Table data
+structure that stores a collection of key and value pairs. It implements
+Map in its most basic form.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TreeSet
+</td>
+<td style="text-align:left;">
+A set is a data structure that allows us to store distinct components.
+The Set does not provide element ordering, but a TreeSet will create
+items in a specific order. TreeSet includes two types in Scala:
+scala.collection.mutable.TreeSet and scala.collection.immutable.TreeSet.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+TreeMap
+</td>
+<td style="text-align:left;">
+TreeMap is useful when performing range queries or traversing in order,
+whereas the map does not keep order. If you only need key lookups and
+don’t care in which order key-values are traversed, Map will suffice,
+which will generally have better performance.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BitSet
+</td>
+<td style="text-align:left;">
+Bitsets are collections of non-negative integers that are expressed as
+64-bit words with variable-size arrays of bits. The greatest number
+stored in a bitset determines its memory footprint. There are two
+versions of BitSet in Scala: scala.collection.immutable.BitSet and
+scala.collection.mutable.BitSet.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ListMap
+</td>
+<td style="text-align:left;">
+A ListMap is a collection of key and value pairs where the keys are
+backed by a List data structure. ListMap collections are used only for a
+small number of elements.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WeakHashMap
+</td>
+<td style="text-align:left;">
+A weak hash map is a special kind of hash map where the garbage
+collector does not follow links from the map to the keys stored in it.
+This means that a key and its associated value will disappear from the
+map if there is no other reference to that key. Weak hash maps are
+useful for tasks such as caching, where you want to re-use an expensive
+function’s result if the function is called again on the same key.
+</td>
+</tr>
+</tbody>
+</table>
 
 ### Benchmark Codes
 
@@ -542,6 +1723,276 @@ In the below code, the definition of each collection can be found.
 The benchmark information is now ready. The table below shows the
 estimated size in bytes of various collections of varied sizes.
 
+<table>
+<caption>
+Estimated Size of Scala Collections\[Int\] In Different Size (in bytes)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Immutability
+</th>
+<th style="text-align:left;">
+Collection
+</th>
+<th style="text-align:right;">
+1
+</th>
+<th style="text-align:right;">
+16
+</th>
+<th style="text-align:right;">
+256
+</th>
+<th style="text-align:right;">
+4,096
+</th>
+<th style="text-align:right;">
+65,536
+</th>
+<th style="text-align:right;">
+1,048,576
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+HashMap
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+1136
+</td>
+<td style="text-align:right;">
+24304
+</td>
+<td style="text-align:right;">
+430384
+</td>
+<td style="text-align:right;">
+7050528
+</td>
+<td style="text-align:right;">
+111206912
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+HashSet
+</td>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+744
+</td>
+<td style="text-align:right;">
+14184
+</td>
+<td style="text-align:right;">
+235944
+</td>
+<td style="text-align:right;">
+3906968
+</td>
+<td style="text-align:right;">
+60877432
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+ListMap
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:right;">
+656
+</td>
+<td style="text-align:right;">
+12304
+</td>
+<td style="text-align:right;">
+227344
+</td>
+<td style="text-align:right;">
+3667984
+</td>
+<td style="text-align:right;">
+58718224
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+TreeMap
+</td>
+<td style="text-align:right;">
+88
+</td>
+<td style="text-align:right;">
+808
+</td>
+<td style="text-align:right;">
+14376
+</td>
+<td style="text-align:right;">
+260136
+</td>
+<td style="text-align:right;">
+4192296
+</td>
+<td style="text-align:right;">
+67106856
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+TreeSet
+</td>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+824
+</td>
+<td style="text-align:right;">
+12344
+</td>
+<td style="text-align:right;">
+196664
+</td>
+<td style="text-align:right;">
+3145784
+</td>
+<td style="text-align:right;">
+50331704
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+HashMap
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+824
+</td>
+<td style="text-align:right;">
+14328
+</td>
+<td style="text-align:right;">
+268848
+</td>
+<td style="text-align:right;">
+4412704
+</td>
+<td style="text-align:right;">
+63585176
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+HashSet
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+568
+</td>
+<td style="text-align:right;">
+7848
+</td>
+<td style="text-align:right;">
+112568
+</td>
+<td style="text-align:right;">
+2097144
+</td>
+<td style="text-align:right;">
+32883416
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+TreeSet
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+960
+</td>
+<td style="text-align:right;">
+14400
+</td>
+<td style="text-align:right;">
+229440
+</td>
+<td style="text-align:right;">
+3670080
+</td>
+<td style="text-align:right;">
+58720320
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+WeakHashMap
+</td>
+<td style="text-align:right;">
+344
+</td>
+<td style="text-align:right;">
+1248
+</td>
+<td style="text-align:right;">
+17856
+</td>
+<td style="text-align:right;">
+259784
+</td>
+<td style="text-align:right;">
+98542768
+</td>
+<td style="text-align:right;">
+67101968
+</td>
+</tr>
+</tbody>
+</table>
+
 The average memory size of each object is calculated and shown below.
 
 ![](images/unnamed-chunk-37-1.png)<!-- -->
@@ -550,10 +2001,251 @@ The average memory size of each object is calculated and shown below.
 
 The table below contains a list of the data collection methods used.
 
+<table>
+<caption>
+Operations That Are Tested on Maps ans Sets
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+operations
+</th>
+<th style="text-align:left;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+lookup
+</td>
+<td style="text-align:left;">
+Testing whether an element is contained in set, or selecting a value
+associated with a key.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+add
+</td>
+<td style="text-align:left;">
+Adding a new element to a set or key/value pair to a map.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+remove
+</td>
+<td style="text-align:left;">
+Removing an element from a set or a key from a map.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+min
+</td>
+<td style="text-align:left;">
+The smallest element of the set, or the smallest key of a map.
+</td>
+</tr>
+</tbody>
+</table>
+
 Scala collection performance characteristics can be found in the [Scala
 documents](https://docs.scala-lang.org/overviews/collections/performance-characteristics.html).
 For comparison with the empirical results, the Scala performance table
 is given below.
+
+<table>
+<caption>
+Performance Characteristics of Immutable Maps and Sets
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Immutability
+</th>
+<th style="text-align:left;">
+Collection
+</th>
+<th style="text-align:left;">
+lookup
+</th>
+<th style="text-align:left;">
+add
+</th>
+<th style="text-align:left;">
+remove
+</th>
+<th style="text-align:left;">
+min
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+HashSet/HashMap
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+TreeSet/TreeMap
+</td>
+<td style="text-align:left;">
+Log
+</td>
+<td style="text-align:left;">
+Log
+</td>
+<td style="text-align:left;">
+Log
+</td>
+<td style="text-align:left;">
+Log
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+BitSet
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+eC1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+ListMap
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+HashSet/HashMap
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+WeakHashMap
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+eC
+</td>
+<td style="text-align:left;">
+L
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+BitSet
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+aC
+</td>
+<td style="text-align:left;">
+C
+</td>
+<td style="text-align:left;">
+eC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+TreeSet
+</td>
+<td style="text-align:left;">
+Log
+</td>
+<td style="text-align:left;">
+Log
+</td>
+<td style="text-align:left;">
+Log
+</td>
+<td style="text-align:left;">
+Log
+</td>
+</tr>
+</tbody>
+</table>
 
 The performance results of each method and collection are shown using a
 scatter plot. We add a regression line to the plot to see the growth

@@ -221,11 +221,11 @@ sequence_description <- tibble::tribble(
 
 ```{r}
 library(kableExtra)
-table <- flextable(sequence_description) %>% 
-  set_caption(caption = "Collection Types and Descriptions") %>% 
-  merge_v(j = "Immutability") %>% 
-  autofit()
-kable(sequence_description)
+# table <- flextable(sequence_description) %>% 
+#   set_caption(caption = "Collection Types and Descriptions") %>% 
+#   merge_v(j = "Immutability") %>% 
+#   autofit()
+kable(sequence_description,caption = "Collection Types and Descriptions")
 ```
 
 ### Benchmark Codes
@@ -409,10 +409,11 @@ collection_size <- stats %>%
   select(Immutability, Collection,size, volume) %>% 
   spread(size, volume)
 colnames(collection_size)[3:8] = scales::comma(16^(0:5))
-flextable(collection_size ) %>% 
-  merge_v(j = "Immutability") %>% 
-  set_caption(caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)") %>% 
-  flextable::theme_vanilla()
+# flextable(collection_size ) %>% 
+#   merge_v(j = "Immutability") %>% 
+#   set_caption(caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)") %>% 
+#   flextable::theme_vanilla()
+kable(collection_size, caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)")
 ```
 
 ```{r}
@@ -434,7 +435,7 @@ collection_volume %>%
   e_bar(ave_size) %>% 
   e_flip_coords() %>%
   e_axis_labels(x = "Collection", y = "Volume") %>% 
-  e_title("Average Collection[Int] Volume in Bytes") %>% 
+  # e_title("Average Collection[Int] Volume in Bytes") %>% 
   e_tooltip(trigger = "axis", textStyle = list(color = "#ffffff")) %>% 
   e_theme("shine")
 ```
@@ -458,18 +459,20 @@ sequence_operation <- tibble::tribble(
 
 
 ```{r}
-flextable(sequence_operation) %>% 
-  set_caption(caption = "Operations That Are Tested on Sequence Types") %>% 
-  autofit()
+# flextable(sequence_operation) %>% 
+#   set_caption(caption = "Operations That Are Tested on Sequence Types") %>% 
+#   autofit()
+kable(sequence_operation, caption = "Operations That Are Tested on Sequence Types")
 ```
 
 We can find performance characteristics of Scala collections in the [Scala documents](https://docs.scala-lang.org/overviews/collections/performance-characteristics.html). The Scala performance table is provided below for comparison with the empirical results.
 
 ```{r}
-flextable(sequence) %>% 
-  merge_v(j = "Immutability") %>% 
-  set_caption(caption = "Performance characteristics of sequence types") %>% 
-  flextable::theme_vanilla()
+# flextable(sequence) %>% 
+#   merge_v(j = "Immutability") %>% 
+#   set_caption(caption = "Performance characteristics of sequence types") %>% 
+#   flextable::theme_vanilla()
+kable(sequence, caption = "Performance characteristics of sequence types")
 ```
 
 ```{r type_performance}
@@ -484,9 +487,10 @@ type_performance <- tibble::tribble(
 ```
 
 ```{r}
-flextable(type_performance) %>% 
-  set_caption(caption = "Performance characteristics of sequence types") %>% 
-  autofit()
+# flextable(type_performance) %>% 
+#   set_caption(caption = "Performance characteristics of sequence types") %>% 
+#   autofit()
+kable(type_performance, caption = "Performance characteristics of sequence types")
 ```
 
 ```{r}
@@ -649,9 +653,10 @@ map_sets_description <- tibble::tribble(
 ```
 
 ```{r}
-flextable(map_sets_description) %>% 
-  set_caption(caption = "Maps and Sets Data Collections") %>% 
-  autofit()
+# flextable(map_sets_description) %>% 
+#   set_caption(caption = "Maps and Sets Data Collections") %>% 
+#   autofit()
+kable(map_sets_description, caption = "Maps and Sets Data Collections")
 ```
 
 ### Benchmark Codes
@@ -735,10 +740,11 @@ collection_size <- stats %>%
   select(Immutability, Collection,size, volume) %>% 
   spread(size, volume)
 colnames(collection_size)[3:8] = scales::comma(16^(0:5))
-flextable(collection_size ) %>% 
-  merge_v(j = "Immutability") %>% 
-  set_caption(caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)") %>% 
-  flextable::theme_vanilla()
+# flextable(collection_size ) %>% 
+#   merge_v(j = "Immutability") %>% 
+#   set_caption(caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)") %>% 
+#   flextable::theme_vanilla()
+kable(collection_size, caption = "Estimated Size of Scala  Collections[Int] In Different Size (in bytes)")
 ```
 
 ```{r}
@@ -760,7 +766,7 @@ collection_volume %>%
   e_bar(ave_size) %>% 
   e_flip_coords() %>%
   e_axis_labels(x = "Collection", y = "Volume") %>% 
-  e_title("Average Collection[Int] Volume in Bytes") %>% 
+  # e_title("Average Collection[Int] Volume in Bytes") %>% 
   e_tooltip(trigger = "axis", textStyle = list(color = "#ffffff")) %>% 
   e_theme("shine")
 ```
@@ -779,9 +785,10 @@ map_set_operation <- tibble::tribble(
 "min",	"The smallest element of the set, or the smallest key of a map."
 )
 
-flextable(map_set_operation) %>% 
-  set_caption(caption = "Operations That Are Tested on Maps ans Sets") %>% 
-  autofit()
+# flextable(map_set_operation) %>% 
+#   set_caption(caption = "Operations That Are Tested on Maps ans Sets") %>% 
+#   autofit()
+kable(map_set_operation, caption = "Operations That Are Tested on Maps ans Sets")
 ```
 
 Scala collection performance characteristics can be found in the [Scala documents](https://docs.scala-lang.org/overviews/collections/performance-characteristics.html). For comparison with the empirical results, the Scala performance table is given below.
@@ -798,9 +805,10 @@ immutable_map_set <- tibble::tribble(
     "Mutable", "BitSet", "C", "aC", "C","eC",
     "Mutable", "TreeSet", "Log", "Log", "Log", "Log"
   )
-flextable(immutable_map_set) %>% 
-    merge_v(j = "Immutability") %>% 
-  set_caption(caption = "Performance Characteristics of Immutable Maps and Sets")
+# flextable(immutable_map_set) %>% 
+#     merge_v(j = "Immutability") %>% 
+#   set_caption(caption = "Performance Characteristics of Immutable Maps and Sets")
+kable(immutable_map_set,caption = "Performance Characteristics of Immutable Maps and Sets")
 ```
 
 ```{r}
