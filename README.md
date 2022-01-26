@@ -40,6 +40,222 @@ And the following figure shows `Seq` collections in package
 Before seeing the collection benchmark tables, it is useful to review
 the collection definition and its properties.
 
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Immutability
+</th>
+<th style="text-align:left;">
+Collection
+</th>
+<th style="text-align:left;">
+description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+List
+</td>
+<td style="text-align:left;">
+A List is a collection that contains immutable data. The Scala List
+class holds a sequenced, linear list of items.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Stream
+</td>
+<td style="text-align:left;">
+The Stream is a lazy list where elements are evaluated only when they
+are needed. Streams have the same performance characteristics as lists.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Vector
+</td>
+<td style="text-align:left;">
+Vectors in Scala are immutable data structures providing random access
+for elements and is similar to the list. But, the list has incompetence
+of random access of elements.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Queue
+</td>
+<td style="text-align:left;">
+A Queue is a first-in, first-out (FIFO) data structure. Scala offers
+both an immutable queue and a mutable queue. A mutable queue can be
+updated or extended in place. It means one can change, add, or remove
+elements of a queue as a side effect. Queue is implemented as a pair of
+lists. One is used to insert the elements and the second to contain
+deleted elements. Elements are added to the first list and removed from
+the second list. The two most basic operations of Queue are Enqueue and
+Dequeue.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Stack
+</td>
+<td style="text-align:left;">
+A Stack is a data structure that follows the last-in, first-out(LIFO)
+principle. We can add or remove element only from one end called top.
+Scala has both mutable and immutable versions of a stack.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+Range
+</td>
+<td style="text-align:left;">
+The Range can be defined as an organized series of uniformly separated
+Integers. It is helpful in supplying more strength with fewer methods,
+so operations performed here are very quick.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Immutable
+</td>
+<td style="text-align:left;">
+String
+</td>
+<td style="text-align:left;">
+A string is a sequence of characters. In Scala, objects of String are
+immutable which means they are constant and cannot be changed once
+created.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArrayBuffer
+</td>
+<td style="text-align:left;">
+To create a mutable, indexed sequence whose size can change, the
+ArrayBuffer class is used. Internally, an ArrayBuffer is an Array of
+elements, as well as the store’s current size of the array. When an
+element is added to an ArrayBuffer, its size is checked. If the
+underlying array isn’t full, then the element is directly added to the
+array. If the underlying array is full, then a larger array is
+constructed and all the elements are copied to the new array. The key is
+that the new array is constructed larger than what is required for the
+current addition.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ListBuffer
+</td>
+<td style="text-align:left;">
+The ListBuffer object is convenient when we want to build a list from
+front to back. It supports efficient prepend and append operations. The
+time taken to convert the ListBuffer into a List is constant.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+StringBuilder
+</td>
+<td style="text-align:left;">
+A String object is immutable. When you need to perform repeated
+modifications to a string, we need a StringBuilder class. A
+StringBuilder is utilized to append input data to the internal buffer.
+Numerous operations like appending data, inserting data, and removing
+data are supported in StringBuilder.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+MutableList
+</td>
+<td style="text-align:left;">
+A MutableList consists of a single linked list together with a pointer
+that refers to the terminal empty node of that list. This makes list
+append a constant time operation because it avoids having to traverse
+the list in search for its terminal node.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArraySeq
+</td>
+<td style="text-align:left;">
+Array sequences are mutable sequences of a fixed size that store their
+elements internally in an Array\[Object\]. You would typically use an
+ArraySeq if you want an array for its performance characteristics, but
+you also want to create generic instances of the sequence where you do
+not know the type of the elements and you do not have a ClassTag to
+provide them at run-time.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+ArrayStack
+</td>
+<td style="text-align:left;">
+An ArrayStack is a MutableStack that contains a FastList of data.
+ArrayStack iterates from top to bottom (LIFO order). The backing data
+structure grows and shrinks by 50% at a time, and size is constant.
+ArrayStack does not extend Vector, as does the Java Stack, which was one
+of the reasons for creating this data structure.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mutable
+</td>
+<td style="text-align:left;">
+Array
+</td>
+<td style="text-align:left;">
+Array is a special mutable kind of collection in Scala. it is a fixed
+size data structure that stores elements of the same data type.
+</td>
+</tr>
+</tbody>
+</table>
+
 ### Benchmark Codes
 
 We created a Scala project with a sbt for assessment data collection.

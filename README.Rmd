@@ -13,7 +13,7 @@ library(DiagrammeRsvg)
 library(rsvg)
 library(knitr)
 knitr::opts_chunk$set(echo = FALSE, comment = " ",
-                      fig.path = "images/",
+                      fig.path = "images/", dev="svg", 
                       message = FALSE, warning = FALSE, error = FALSE)
 load_image <- function(path){
 graph %>%
@@ -220,10 +220,12 @@ sequence_description <- tibble::tribble(
 ```
 
 ```{r}
-flextable(sequence_description) %>% 
+library(kableExtra)
+table <- flextable(sequence_description) %>% 
   set_caption(caption = "Collection Types and Descriptions") %>% 
   merge_v(j = "Immutability") %>% 
   autofit()
+kable(sequence_description)
 ```
 
 ### Benchmark Codes
